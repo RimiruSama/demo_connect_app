@@ -48,7 +48,7 @@ const App = () => {
   const handleConnect = async () => {
     socketIo.current = io(`${URL}`, {
       extraHeaders: {
-        Authorization: deviceId
+        Authorization: 'b23e042f9808454176b06d702245d62b56ab9f'
       },
       ...SOCKET_CONFIG
     })
