@@ -35,7 +35,8 @@ const App = () => {
 
   const handleScreenshot = async () => {
     await window.context.captureScreenShot()
-    window.context.screenShotCaptured(async (event: Event, dataURL: string) => {
+
+    window.context.screenShotCaptured(async (_event: Event, dataURL: string) => {
       const a = dataURLtoFile(dataURL, 'test.png')
       const formData = new FormData()
       formData.append('file', a)
