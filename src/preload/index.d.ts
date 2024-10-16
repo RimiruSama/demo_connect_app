@@ -9,6 +9,11 @@ declare global {
       // getNotes: GetNotes
       // readNote: ReadNote
       runFileSetup: () => void
+      capureScreen: () => void
+      captureScreenShot: () => void
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      screenShotCaptured: any
+      getDataDeviceID: (deviceId: string) => void
     }
   }
 }

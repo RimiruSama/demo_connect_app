@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { runFileSetup } from './lib'
+import { capureScreen, getDataDeviceID, runFileSetup } from './lib'
 
 function createWindow(): void {
   // Create the browser window.
@@ -10,14 +10,14 @@ function createWindow(): void {
     width: 900,
     height: 670,
     show: false,
-    autoHideMenuBar: true,
+    // autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     center: true,
     title: 'NoteMark',
-    frame: false,
+    // frame: false,
     vibrancy: 'under-window',
     visualEffectState: 'active',
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden',
     trafficLightPosition: { x: 15, y: 15 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -61,7 +61,12 @@ app.whenReady().then(() => {
   // ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => getNotes(...args))
   // ipcMain.handle('readNote', (_, ...args: Parameters<ReadNote>) => readNote(...args))
   ipcMain.handle('runFileSetup', () => runFileSetup())
-
+  ipcMain.on('capture-screenshot', async (event) => {
+    const screenShotInfo = await capureScreen()
+    const dataURL = screenShotInfo?.toDataURL()
+    event.sender.send('screenshot-captured', dataURL)
+  })
+  ipcMain.handle('getDataDeviceID', (_, args: string) => getDataDeviceID(args))
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
