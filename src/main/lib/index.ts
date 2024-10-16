@@ -85,9 +85,12 @@ export const capureScreen = async () => {
 
 export const getDataDeviceID = async (deviceId: string) => {
   const fs = require('fs')
-  const content = fs.readFileSync(join(__dirname, '../../resources/config.txt'), 'utf8')
+  let path = join(__dirname, '../../resources/config.txt')
+  path = path.replace('app.asar', 'app.asar.unpacked')
+
+  const content = fs.readFileSync(path, 'utf8')
   if (content == '') {
-    const writeInterface = fs.createWriteStream(join(__dirname, '../../resources/config.txt'), {
+    const writeInterface = fs.createWriteStream(path, {
       flags: 'a'
     })
     writeInterface.write(`${deviceId}`)
