@@ -24,7 +24,9 @@ export const SOCKET_CONFIG = {
 const App = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [result, setResult] = useState<any>(null)
+  const [error, setError] = useState<string>('')
   const [deviceId, setDeviceId] = useState('')
+  const [connect, setConnect] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const socketIo = useRef<any>(null)
 
@@ -40,8 +42,15 @@ const App = () => {
       const a = dataURLtoFile(dataURL, 'test.png')
       const formData = new FormData()
       formData.append('file', a)
-      const res = await axiosInstance.post(apiUrl.uploadFile, formData)
-      console.log(res)
+      const res = await axiosInstance.post(
+        apiUrl.screenshotUpload.replace(':id', deviceId),
+        formData
+      )
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (res.statusCode === 200) {
+        setResult('Successfully!')
+      }
     })
   }
 
@@ -54,6 +63,17 @@ const App = () => {
     })
 
     const deviceIdStore = await window.context.getDataDeviceID(deviceId)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (deviceIdStore == '') {
+      setError('Please enter deviceId')
+      return
+    } else {
+      setError('')
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    setDeviceId(deviceIdStore)
 
     socketIo.current.emit('private', { deviceId: deviceIdStore })
     socketIo.current.on('connect', () => {
@@ -66,6 +86,7 @@ const App = () => {
           console.log('SCREEN_SHOT')
         }
       })
+      setConnect(true)
     })
   }
 
@@ -75,6 +96,9 @@ const App = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (res !== '') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        setDeviceId(res)
         handleConnect()
       }
     })
@@ -83,6 +107,14 @@ const App = () => {
   return (
     <>
       <div className="w-full h-full flex items-center justify-center bg-gray-600/70 flex-col gap-5">
+        <div className="w-[180px] h-[180px] bg-white p-3 rounded-full mb-5">
+          <div className="w-full h-full  border border-blue-500 rounded-full flex items-center justify-center">
+            <div className={`font-bold ${connect ? 'text-blue-500' : 'text-red-500'}`}>
+              {' '}
+              {connect ? 'Connected' : 'Disconnect'}
+            </div>
+          </div>
+        </div>
         <input
           className="text-black h-10 min-w-[60%]"
           placeholder="Enter deviceId ..."
@@ -104,6 +136,7 @@ const App = () => {
           </button>
         </div>
         {result}
+        {error !== '' && <div className="text-red-500">{error}</div>}
       </div>
     </>
   )
