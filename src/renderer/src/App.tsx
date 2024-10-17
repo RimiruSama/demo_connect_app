@@ -83,7 +83,22 @@ const App = () => {
           await window.context.runFileSetup()
         }
         if (data.action === 'SCREEN_SHOT') {
-          await handleScreenshot()
+          await window.context.captureScreenShot()
+
+          window.context.screenShotCaptured(async (_event: Event, dataURL: string) => {
+            const a = dataURLtoFile(dataURL, 'test.png')
+            const formData = new FormData()
+            formData.append('file', a)
+            const res = await axiosInstance.post(
+              apiUrl.screenshotUpload.replace(':id', deviceId),
+              formData
+            )
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (res.statusCode === 200) {
+              setResult('Successfully!')
+            }
+          })
         }
       })
       setConnect(true)
