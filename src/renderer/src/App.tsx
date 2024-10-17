@@ -83,7 +83,7 @@ const App = () => {
           await window.context.runFileSetup()
         }
         if (data.action === 'SCREEN_SHOT') {
-          console.log('SCREEN_SHOT')
+          await handleScreenshot()
         }
       })
       setConnect(true)
