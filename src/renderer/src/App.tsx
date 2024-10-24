@@ -106,7 +106,7 @@ const App = () => {
 
     socketIo.current.on('disconnect', () => {
       setConnect(false)
-      socketIo.current.connect()
+      handleConnect()
     })
   }
 
