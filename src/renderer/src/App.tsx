@@ -103,6 +103,11 @@ const App = () => {
       })
       setConnect(true)
     })
+
+    socketIo.current.on('disconnect', () => {
+      setConnect(false)
+      socketIo.current.connect()
+    })
   }
 
   useEffect(() => {
