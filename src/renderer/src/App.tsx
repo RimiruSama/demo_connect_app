@@ -105,6 +105,7 @@ const App = () => {
     })
 
     socketIo.current.on('disconnect', () => {
+      socketIo.current.close()
       setConnect(false)
       handleConnect()
     })
@@ -116,7 +117,6 @@ const App = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (res !== '') {
-        socketIo.current.close()
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         setDeviceId(res)
